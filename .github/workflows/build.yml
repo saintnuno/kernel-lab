@@ -1,0 +1,28 @@
+name: Build Kernel Module
+
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'Kbuild'
+      - 'Makefile'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'Kbuild'
+      - 'Makefile'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kernel headers
+        run: sudo apt-get update && sudo apt-get install -y linux-headers-$(uname -r)
+
+      - name: Build module
+        run: make
+
+      - name: Verify .ko file exists
+        run: test -f build/hello.ko && echo "build/hello.ko exists"

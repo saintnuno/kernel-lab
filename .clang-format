@@ -1,0 +1,12 @@
+IndentWidth: 8
+UseTab: Always
+TabWidth: 8
+BreakBeforeBraces: Linux
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+IndentCaseLabels: false
+ColumnLimit: 80
+AlignTrailingComments: false
+PointerAlignment: Right
+SpaceBeforeParens: ControlStatements
