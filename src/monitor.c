@@ -1,9 +1,11 @@
+#include <linux/bitmap.h>
 #include <linux/delay.h>
 #include <linux/init.h>
 #include <linux/kthread.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/sched/signal.h>
+#include <linux/signal.h>
 #include <linux/workqueue.h>
 
 static int interval = 5;
@@ -27,11 +29,50 @@ static void monitor_work_handler(struct work_struct *work)
 
 static DECLARE_WORK(monitor_work, monitor_work_handler);
 
+static void count_and_log_tasks(void)
+{
+	struct task_struct *task;
+	int count = 0;
+
+	rcu_read_lock();
+	for_each_process(task) count++;
+	rcu_read_unlock();
+
+	pr_info("monitor: total tasks = %d\n", count);
+}
+
 static int thread_fn(void *data)
 {
+	int bit;
+
+	allow_signal(SIGINT);
+	allow_signal(SIGTERM);
+
 	while (!kthread_should_stop()) {
-		msleep_interruptible(interval * 1000);
-		queue_work(monitor_wq, &monitor_work);
+		if (msleep_interruptible(interval * 1000) == 0) {
+			queue_work(monitor_wq, &monitor_work);
+			continue;
+		}
+
+		if (!signal_pending(current))
+			continue;
+
+		for_each_set_bit(
+		    bit, current->signal->shared_pending.signal.sig, _NSIG)
+		{
+			if (bit == SIGINT - 1) {
+				pr_info("monitor: SIGINT received, counting "
+					"tasks\n");
+				count_and_log_tasks();
+			} else if (bit == SIGTERM - 1) {
+				pr_info("monitor: SIGTERM received, exiting "
+					"thread\n");
+				flush_signals(current);
+				return 0;
+			}
+		}
+
+		flush_signals(current);
 	}
 	return 0;
 }
@@ -64,6 +105,7 @@ static int __init monitor_init(void)
 static void __exit monitor_exit(void)
 {
 	kthread_stop(monitor_thread);
+	pr_info("monitor: thread stopped\n");
 	flush_workqueue(monitor_wq);
 	destroy_workqueue(monitor_wq);
 	pr_info("Monitor module unloaded\n");
