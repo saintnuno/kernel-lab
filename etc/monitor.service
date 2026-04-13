@@ -5,7 +5,7 @@
 
 [Unit]
 Description=Process monitor kernel module
-After=local-fs.target
+After=multi-user.target
 
 [Service]
 Type=oneshot

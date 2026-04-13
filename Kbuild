@@ -1,3 +1,1 @@
-obj-m := hello.o monitor.o
-hello-y := src/hello.o
-monitor-y := src/monitor.o
+obj-m := hello.o monitor.o race_demo.o percpu_demo.o
