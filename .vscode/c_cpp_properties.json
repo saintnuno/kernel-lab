@@ -1,0 +1,27 @@
+{
+  "configurations": [
+    {
+      "name": "Linux",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/.kheaders/include",
+        "${workspaceFolder}/.kheaders/include/uapi",
+        "${workspaceFolder}/.kheaders/include/generated",
+        "${workspaceFolder}/.kheaders/include/generated/uapi",
+        "${workspaceFolder}/.kheaders/arch/x86/include",
+        "${workspaceFolder}/.kheaders/arch/x86/include/uapi",
+        "${workspaceFolder}/.kheaders/arch/x86/include/generated",
+        "${workspaceFolder}/.kheaders/arch/x86/include/generated/uapi"
+      ],
+      "defines": [
+        "__KERNEL__",
+        "MODULE",
+        "__x86_64__"
+      ],
+      "cStandard": "gnu11",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerPath": "/usr/bin/gcc"
+    }
+  ],
+  "version": 4
+}
