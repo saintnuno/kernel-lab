@@ -1,0 +1,20 @@
+#cloud-config
+chpasswd:
+  users:
+    - name: root
+      password: kernel-dev
+      type: text
+  expire: false
+
+ssh_pwauth: true
+disable_root: false
+
+users:
+  - name: root
+    ssh_authorized_keys:
+      - {{SSH_PUBLIC_KEY}}
+
+runcmd:
+  - sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+  - sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+  - systemctl restart ssh

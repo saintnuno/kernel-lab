@@ -1,0 +1,17 @@
+# Install and enable:
+#   cp monitor.service /etc/systemd/system/
+#   systemctl daemon-reload
+#   systemctl enable --now monitor
+
+[Unit]
+Description=Process monitor kernel module
+After=multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/modprobe monitor
+ExecStop=/usr/sbin/rmmod monitor
+
+[Install]
+WantedBy=multi-user.target

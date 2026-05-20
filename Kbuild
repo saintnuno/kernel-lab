@@ -1,2 +1,1 @@
-obj-m := hello.o
-hello-y := src/hello.o
+obj-m := hello.o monitor.o race_demo.o percpu_demo.o
